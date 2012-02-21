@@ -77,11 +77,18 @@ class QWTest < Test::Unit::TestCase
   end
 
   def test_can_query_master
-
+    s = QW::Master.new( "qwmaster.fodquake.net", 27000 )
+    assert_equal( true, s.query )
+  end
+  
+  def test_can_query_server
+    s = QW::Server.new( "74.86.171.201", 27500 )
+    assert_equal( true, s.query )
   end
 
   def test_cant_query_non_existant_master
-
+    s = QW::Master.new( "127.0.0.123", 13371 )
+    assert_equal( false, s.query )
   end
 
   def test_cant_query_non_existant_server
@@ -90,7 +97,7 @@ class QWTest < Test::Unit::TestCase
   end
 
   def test_can_parse_master_response
-    #QW::Master.from_packet
+    m = QW::Master.from_packet @master_response
   end
 
   def test_can_parse_players_properly
