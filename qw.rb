@@ -99,12 +99,30 @@ module QW
       unsigned :port,  32,  "Port", :endian => :big
     end
    
-    def self.from_address( ip, port, query = false )
-      data = Util.send_cmd( ip, port, QW::QWM_SERVERLIST )
-      
-      Master.parse_response( data, query)
+    def initialize( ip="", port=27500 )
+      @ip = ip
+      @port = port
     end
 
+    def self.from_address( ip, port )
+      Master.new( ip, port )
+    end
+    
+    def self.from_packet( packet )
+      s = Master.new
+      s.parse_response packet
+      s
+    end
+    
+    def query
+      return false if ( @ip.empty? )
+     
+      data = Util.send_cmd( @ip, @port, QWS_SERVERINFO )
+      return false if data.nil?
+      
+      parse_response data
+    end
+    
     def parse_response( data, query )
       num_returned = (data.length / 6)-1 # each addr is 6 bytes
       puts "N:" +  num_returned.to_s 
